@@ -14,14 +14,16 @@ api.add_resource(PingService, '/apis/ping/<service_name>')
 cors_origin_pattern = re.compile(".*\.knnect\.com")
 @app.after_request
 def post_request_handler(response):
-    if not request.origin:
+    try:
+        matched = cors_origin_pattern.match(request.origin)
+        if matched:
+            response.access_control_allow_origin = request.origin
+            response.access_control_allow_methods = [request.method]
+            response.access_control_allow_headers = list(request.headers.keys())
         return response
-    matched = cors_origin_pattern.match(request.origin)
-    if matched:
-        response.access_control_allow_origin = request.origin
-        response.access_control_allow_methods = [request.method]
-        response.access_control_allow_headers = list(request.headers.keys())
-    return response
+    except AttributeError:
+        print("No origin header")
+        return response
 
 # Uncomment below for testing locally
 # app.run()
