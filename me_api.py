@@ -15,11 +15,14 @@ cors_origin_pattern = re.compile(".*\.knnect\.com")
 @app.after_request
 def post_request_handler(response):
     try:
-        matched = cors_origin_pattern.match(request.origin)
+        origin = request.headers.get('origin')
+        if not origin:
+            return response
+        matched = cors_origin_pattern.match(origin)
         if matched:
-            response.access_control_allow_origin = request.origin
-            response.access_control_allow_methods = [request.method]
-            response.access_control_allow_headers = list(request.headers.keys())
+            response.headers['Access-Control-Allow-Origin'] = origin
+            response.headers['Access-Control-Allow-Methods'] = request.method
+            response.headers['Access-Control-Allow-Headers'] = ','.join(list(request.headers.keys()))
         return response
     except AttributeError:
         print("No origin header")
