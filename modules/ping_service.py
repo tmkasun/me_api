@@ -9,9 +9,12 @@ class PingService(Resource):
 
     def get(self, service_name):
         if service_name == 'me':
-            return {'status': Utils.uptime(), 'timestamp': int(time.time())}
-        status = Utils.ping("home.knnect.com")
-        return {'status': status, 'timestamp': int(time.time())}
+            return {'status': Utils.uptime(service_name), 'timestamp': int(time.time())}
+        elif service_name == 'dell':
+            status = Utils.ping("plex.knnect.com")
+            return {'status': status, 'timestamp': int(time.time())}
+        return {'status': False, 'timestamp': int(time.time())}
+        
      
     def post(self, service_name):
         return {'submitted': True}

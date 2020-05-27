@@ -1,14 +1,17 @@
 # from modules.feedback_service import FeedbackService
 from modules.ping_service import PingService
+from modules.operations_service import OperationsService
 from flask import Flask
 from flask_restful import Api
 from flask import request
 import re
+import os
 
 app = Flask(__name__)
 api = Api(app)
 # api.add_resource(FeedbackService, '/apis/feedbacks')
 api.add_resource(PingService, '/apis/ping/<service_name>')
+api.add_resource(OperationsService, '/apis/operations/<server_id>')
 
 # in-house CORS handler
 cors_origin_pattern = re.compile(".*\.knnect\.com")
@@ -28,8 +31,9 @@ def post_request_handler(response):
         print("No origin header")
         return response
 
-# Uncomment below for testing locally
-# app.run()
+# To test the app in local environment set the `FLASK_ENV` environment variable value as `development`
+if os.environ.get('FLASK_ENV') == 'development':
+    app.run()
 
 def main():
     app.run(host='0.0.0.0', port=9900)
